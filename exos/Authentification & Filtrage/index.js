@@ -1,7 +1,8 @@
 // 3. Exercices en JavaScript natif : Authentification & Filtrage
 
-function generateToken() {
-    return
+function generateToken(user) {
+    let token = btoa(JSON.stringify(user));
+    return token;
 }
 
 function verifyToken() {

@@ -3,7 +3,8 @@ const { generateToken, verifyToken } = require('./index.js');
 // test for generateToken
 let user = {
     username: "le lutin",
-    password: "malicieux"
+    password: "malicieux",
+    email: "lelutinmalicieux@malice.maléfique"
 };
 
 function testGenerateToken(user) {
@@ -25,7 +26,7 @@ function testGenerateToken(user) {
 function testVerifyToken(token) {
     let user = verifyToken(token);
     try {
-        if (user.username === "le lutin" && user.password === "malicieux") {
+        if (user.username === "le lutin" && user.password === "malicieux" && user.email === "lelutinmalicieux@malice.maléfique") {
             console.log("Token vérifié: " + user.username);
         } else {
             throw new Error("Erreur lors de la vérification du token");
