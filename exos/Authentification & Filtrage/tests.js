@@ -1,5 +1,6 @@
-const { generateToken, verifyToken } = require('./index.js');
+const { generateToken, verifyToken } = require('./Auth.js');
 
+// 1. Auth
 // test for generateToken
 let user = {
     username: "le lutin",
@@ -41,3 +42,5 @@ function testVerifyToken(token) {
 let token = testGenerateToken(user);
 
 testVerifyToken(token);
+
+// 2. Filtrage
