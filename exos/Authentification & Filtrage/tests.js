@@ -1,5 +1,6 @@
-// test for generateToken
+const { generateToken, verifyToken } = require('./index.js');
 
+// test for generateToken
 let user = {
     username: "le lutin",
     password: "malicieux"
@@ -7,10 +8,15 @@ let user = {
 
 function testGenerateToken(user) {
     let token = generateToken(user);
-    if (token) {
-        console.log("Token généré: " + token);
-    } else {
-        console.log("Erreur lors de la génération du token");
+    try {
+        if (token) {
+            console.log("Token généré: " + token);
+        } else {
+            throw new Error("Erreur lors de la génération du token");
+        }
+    } catch (e) {
+        console.log(e);
+        return null;
     }
     return token;
 }
@@ -18,10 +24,15 @@ function testGenerateToken(user) {
 // test for verifyToken
 function testVerifyToken(token) {
     let user = verifyToken(token);
-    if (user.username === "le lutin" && user.password === "malicieux") {
-        console.log("Token vérifié: " + user.username);
-    } else {
-        console.log("Erreur lors de la vérification du token");
+    try {
+        if (user.username === "le lutin" && user.password === "malicieux") {
+            console.log("Token vérifié: " + user.username);
+        } else {
+            throw new Error("Erreur lors de la vérification du token");
+        }
+    } catch (e) {
+        console.log(e);
+        return null;
     }
     return user;
 }
