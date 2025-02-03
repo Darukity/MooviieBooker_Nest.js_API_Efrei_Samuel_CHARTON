@@ -27,7 +27,7 @@ function testVerifyToken(token) {
     let user = verifyToken(token);
     try {
         if (user.username === "le lutin" && user.password === "malicieux" && user.email === "lelutinmalicieux@malice.maléfique") {
-            console.log("Token vérifié: " + user.username);
+            console.log("Token vérifié: " + user.username + ", " + user.password + ", " + user.email);
         } else {
             throw new Error("Erreur lors de la vérification du token");
         }

@@ -5,8 +5,9 @@ function generateToken(user) {
     return token;
 }
 
-function verifyToken() {
-    return
+function verifyToken(token) {
+    let user = JSON.parse(atob(token));
+    return user;    
 }
 
 module.exports = {
