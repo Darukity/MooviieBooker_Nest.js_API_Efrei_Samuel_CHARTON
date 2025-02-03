@@ -61,8 +61,8 @@ let articleArray = [
     { articleName: "Cote de porc", articlePrice: 40, articleStock: 125 }
 ];
 
-function testFilter(array, key, searchValue) {
-    let result = filter(array, key, searchValue);
+function testFilter(array, key, searchValue, mode) {
+    let result = filter(array, key, searchValue, mode);
     try {
         if (result.length > 0) {
             console.log("Résultat du filtre: " + JSON.stringify(result));
@@ -76,5 +76,16 @@ function testFilter(array, key, searchValue) {
     return result;
 }
 
+// in searchStrict mode
 testFilter(userArray, "username", "le lutin");
 testFilter(articleArray, "articleName", "Cote de boeuf");
+
+// in search mode
+testFilter(userArray, "email", "troll", "search");
+testFilter(articleArray, "articleName", "cote", "search");
+
+// in valueUnder mode
+testFilter(articleArray, "articlePrice", 200, "valueUnder");
+
+// in valueOver mode
+testFilter(articleArray, "articleStock", 200, "valueOver");
