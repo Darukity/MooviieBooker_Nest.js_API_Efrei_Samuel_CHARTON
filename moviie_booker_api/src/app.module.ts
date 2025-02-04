@@ -1,27 +1,25 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
+import { User } from './entities/user.entity';
+import 'dotenv/config';
 
-// Connects to the postgres database :
-// Source : https://medium.com/simform-engineering/nestjs-and-postgresql-a-crud-tutorial-32aa78778752
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      password: 'Worldpass@cces',
-      username: 'postgres',
-      entities: [],
-      database: 'postgres',
+      password: process.env.POSTGRES_PASSWORD,
+      username: process.env.POSTGRES_USER,
+      entities: [User],
+      database: process.env.POSTGRES_DB,
       synchronize: true,
       logging: true,
     }),
     UserModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
