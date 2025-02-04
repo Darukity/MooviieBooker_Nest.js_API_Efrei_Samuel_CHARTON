@@ -1,0 +1,12 @@
+{
+  "name": "auth-filtrage",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node tests.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
