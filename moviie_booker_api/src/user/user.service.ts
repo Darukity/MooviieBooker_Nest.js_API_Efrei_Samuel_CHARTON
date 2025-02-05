@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { UnauthorizedException } from '@nestjs/common';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { log } from 'console';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+    private jwtService: JwtService
+  ) {}
+
+
+  async findOne(email: string): Promise<User | undefined> {
+    let user = await this.userRepository.findOne({ where: { email } });
+    if (user) {
+      return user;
+    }
+    return undefined;
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async register(registerDto: RegisterDto) {
+    const user = this.userRepository.create({
+      username: registerDto.username,
+      email: registerDto.email,
+      password: registerDto.password,
+      role: registerDto.role,
+    });
+    await this.userRepository.save(user);
+    return {
+      message: 'Utilisateur créé avec succès',
+    };
   }
+  async login(loginDto: LoginDto) {
+    const user = await this.findOne(loginDto.email);
+    if (!user) {
+      throw new UnauthorizedException('Inncorrect email');
+    }
+    console.log(user.password);
+    console.log(loginDto.password);
+    let password_hash = await bcrypt.hash(loginDto.password, 10);
+    console.log(password_hash);
+    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Incorrect password');
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+    const payload = { email: user.email, sub: user.id };
+    const token = this.jwtService.sign(payload);
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return {
+      message: 'Connexion réussi',
+      access_token: token,
+    };
   }
 }
