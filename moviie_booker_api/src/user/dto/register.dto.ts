@@ -18,5 +18,4 @@ export class RegisterDto {
   @IsString()
   @IsEnum(['user', 'admin'], { message: 'Role must be either user or admin' })
   role: string;
-
 }
