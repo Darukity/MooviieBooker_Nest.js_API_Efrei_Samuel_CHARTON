@@ -7,7 +7,6 @@ import * as bcrypt from 'bcrypt';
 import { UnauthorizedException } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { log } from 'console';
 
 @Injectable()
 export class UserService {
@@ -35,28 +34,31 @@ export class UserService {
     });
     await this.userRepository.save(user);
     return {
-      message: 'Utilisateur créé avec succès',
+      message: 'User succesfully added',
     };
   }
+
   async login(loginDto: LoginDto) {
     const user = await this.findOne(loginDto.email);
     if (!user) {
-      throw new UnauthorizedException('Inncorrect email');
+      throw new UnauthorizedException('Inncorrect  or password');
     }
-    console.log(user.password);
-    console.log(loginDto.password);
-    let password_hash = await bcrypt.hash(loginDto.password, 10);
-    console.log(password_hash);
+    // console.log(user.password);
+    // console.log(loginDto.password);
+    // let password_hash = await bcrypt.hash(loginDto.password, 10);
+    // console.log(password_hash);
     const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Incorrect password');
+      throw new UnauthorizedException('Incorrect password or email');
     }
 
     const payload = { email: user.email, sub: user.id };
     const token = this.jwtService.sign(payload);
+    // const test = this.jwtService.decode(token);
+    // console.log(test);
 
     return {
-      message: 'Connexion réussi',
+      message: 'Connexion succesfull',
       access_token: token,
     };
   }
