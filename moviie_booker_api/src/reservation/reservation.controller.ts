@@ -24,5 +24,5 @@ export class ReservationController {
     @Delete('reservations/:id')
     async deleteReservation(@Param('id') id: number, @Request() req) {
         return this.reservationService.deleteReservations(id, req.headers.authorization);
-    }
+    }    
 }

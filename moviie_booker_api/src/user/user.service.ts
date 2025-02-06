@@ -34,7 +34,7 @@ export class UserService {
     });
     await this.userRepository.save(user);
     return {
-      message: 'User succesfully added',
+      message: 'User successfully added',
     };
   }
 
@@ -61,5 +61,8 @@ export class UserService {
       message: 'Connexion succesfull',
       access_token: token,
     };
+  }
+  async validatePassword(password: string, hashedPassword: string): Promise<boolean> {
+    return await bcrypt.compare(password, hashedPassword);
   }
 }

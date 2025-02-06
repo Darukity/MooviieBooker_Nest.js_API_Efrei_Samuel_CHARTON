@@ -76,7 +76,7 @@ export class ReservationService {
         if (!token || !token.startsWith('Bearer')) {
             throw new UnauthorizedException('Invalid token format');
         }
-
+    
         const jwt = token.split(' ')[1];
         let decodedToken;
         try {
@@ -84,37 +84,47 @@ export class ReservationService {
         } catch (error) {
             throw new UnauthorizedException(`Invalid token. ${error.message}`);
         }
-
+    
         const userId = decodedToken.sub;
-
+    
         if (!userId) {
             throw new UnauthorizedException('Invalid token payload');
         }
-        
-        let userReservations = this.reservationRepository.findOne({ where: { id: id, user: { id: userId } } });
-
+    
+        const userReservations = await this.reservationRepository.findOne({ where: { id, user: { id: userId } } });
+    
         if (!userReservations) {
             throw new UnauthorizedException('Reservation not found or you do not have permission to delete it');
         }
-
-        return this.reservationRepository.delete(id);
+    
+        const deleteResult = await this.reservationRepository.delete(id) || { affected: 0 };
+        
+        if (deleteResult.affected && deleteResult.affected > 0) {
+            return { success: true };
+        } else {
+            throw new UnauthorizedException('Failed to delete reservation');
+        }
     }
+    
+    
 
     //helpers
     async verifyIfNewReservationCrossingAlreadyBookedOnes(registerDto: BookReservation, userId: number): Promise<boolean> {
-        const userReservations = this.reservationRepository.find({ where: { user: { id: userId } } });
-        userReservations.then(reservations => {
-            reservations.forEach(reservation => {
-                let reservationDate = new Date(reservation.reservation_begins);
-                let reservationEnd = new Date(reservationDate.getTime() + 2 * 60 * 60 * 1000);
-                let newReservationDate = new Date(registerDto.reservation_begins);
-                let newReservationEnd = new Date(newReservationDate.getTime() + 2 * 60 * 60 * 1000);
-
-                if ((newReservationDate >= reservationDate && newReservationDate <= reservationEnd) || (newReservationEnd >= reservationDate && newReservationEnd <= reservationEnd)) {
-                    return false;
-                }
-            });
-        });
-        return true;
-    }
+        const userReservations = await this.reservationRepository.find({ where: { user: { id: userId } } }) || [];
+    
+        for (const reservation of userReservations) {
+            let reservationDate = new Date(reservation.reservation_begins);
+            let reservationEnd = new Date(reservationDate.getTime() + 2 * 60 * 60 * 1000);
+            let newReservationDate = new Date(registerDto.reservation_begins);
+            let newReservationEnd = new Date(newReservationDate.getTime() + 2 * 60 * 60 * 1000);
+    
+            if (
+                (newReservationDate >= reservationDate && newReservationDate <= reservationEnd) ||
+                (newReservationEnd >= reservationDate && newReservationEnd <= reservationEnd)
+            ) {
+                return true; // Conflict detected
+            }
+        }
+        return false; // No conflict
+    }    
 }
