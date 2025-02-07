@@ -41,7 +41,7 @@ export class MoviesController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Get movie details by id' })
-    async movie(@Param('id') id: string) {
+    async movie(@Query('id') id: string) {
         return this.movieService.movie(id);
     }
 }
