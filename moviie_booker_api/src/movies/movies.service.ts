@@ -40,6 +40,16 @@ export class MoviesService {
         }
     }
 
+    async movie(id: string) {
+        let url = `${this.apiUrl}/movie/${id}?api_key=${this.apiKey}&language=fr-FR`;
+        try {
+            const response = await this.httpService.axiosRef.get(url);
+            return response.data;
+        } catch (error) {
+            throw new HttpException(error.response?.data || 'Erreur interne', HttpStatus.BAD_REQUEST);
+        }
+    }
+
     async genres() {
         let url = `${this.apiUrl}/genre/movie/list?api_key=${this.apiKey}&language=fr-FR`;
         try {
