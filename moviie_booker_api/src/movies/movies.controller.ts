@@ -32,16 +32,16 @@ export class MoviesController {
         const parsedSearch = JSON.parse(search);
         return this.movieService.movies(Number(page), parsedSearch);
     }
-    
-    @Get(':id')
-    @ApiOperation({ summary: 'Get movie details by id' })
-    async movie(@Param('id') id: string) {
-        return this.movieService.movie(id);
-    }
 
     @Get('genres')
     @ApiOperation({ summary: 'Get a list of movie genres' })
     async genres() {
         return this.movieService.genres();
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Get movie details by id' })
+    async movie(@Param('id') id: string) {
+        return this.movieService.movie(id);
     }
 }
